@@ -21,6 +21,8 @@ import java.util.Properties;
 
 import static fitness_centre.main.ApplicationStarter.*;
 import fitness_centre.view.AppFrame;
+import java.sql.ResultSet;
+import java.util.logging.Level;
 import javax.swing.JOptionPane;
 
 /**
@@ -61,12 +63,36 @@ public class DatabaseManager {
         return connection;
     }
     
+    public boolean isDBCreated() {
+        Connection conn = null;
+        
+        try {
+            conn = getConnection();
+            Statement st = conn.createStatement();
+            ResultSet rs = st.executeQuery("SHOW DATABASES;");
+            while(rs.next()){
+                if(rs.getString("Database").equals("fitness_java")){    
+                    return true;
+                }
+            }
+            rs.close();
+            st.close();
+        } catch (DatabaseConnectionException ex) { 
+            java.util.logging.Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        catch (SQLException ex) {
+            java.util.logging.Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+   
+    }
     
     public void initDatabase(File scriptFile) throws DatabaseInitException {
         if (scriptFile == null || !scriptFile.exists()){
-            throw new DatabaseInitException("Cannot create database");
+            throw new DatabaseInitException("Cannot create database. Script file doesn't exist or not found!");
         }
         Connection conn = null;
+        
         try {
             conn = getConnection();
             conn.setAutoCommit(true);
@@ -105,5 +131,5 @@ public class DatabaseManager {
                 logger.warn("Error closing connection", e);
             }
         }
-    }    
+    }
 }

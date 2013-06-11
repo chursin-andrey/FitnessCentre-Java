@@ -4,7 +4,7 @@
  */
 package fitness_centre.view;
 
-import fitness_centre.controller.TrainersDAO;
+import fitness_centre.controller.TrainerDAO;
 import java.awt.Dimension;
 import javax.swing.*;
 import java.awt.*;
